@@ -1,0 +1,4 @@
+npx ts-node index.ts
+2
+20
+10
