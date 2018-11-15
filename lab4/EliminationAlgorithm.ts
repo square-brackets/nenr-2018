@@ -19,7 +19,7 @@ export interface IAlgorithmOptions {
   mutationProbability: number,
 }
 
-const calculateChromosomeFitness = (chromosome: Chromosome, records: IRecord[]) => {
+export const calculateChromosomeFitness = (chromosome: Chromosome, records: IRecord[]) => {
   const error = records.reduce((acc, record) => {
     const measured = record.value;
     const { x, y } = record;
@@ -43,14 +43,14 @@ export default class EliminationAlgorithm {
   run(records: IRecord[]) {
     const { populationSize, numGenes, lowerBound, upperBound} = this.options;
     this.population = new Population(populationSize, numGenes, upperBound, lowerBound);
-
     this.population.chromosomes.forEach((chromosome) => calculateChromosomeFitness(chromosome, records));
 
     let counterOfBest = 0;
     let bestError = Infinity;
+    let bestErrorChromosome = null;
 
     while (this.iteration < this.options.iterations) {
-      const tournament = rouletteWheelSelection(3, this.population);
+      const tournament = rouletteWheelSelection(3, this.population);    
       const minFitness = tournament.reduce((acc, { fitness }) => Math.min(acc, fitness), Infinity);
       const worstChromosome = tournament.find(({ fitness }) => fitness === minFitness);
       const bestParents = tournament.filter((chromosome) => chromosome !== worstChromosome);
@@ -70,29 +70,29 @@ export default class EliminationAlgorithm {
 
       if (bestChromosome.fitness <= bestError) {
         bestError = bestChromosome.fitness;
+        bestErrorChromosome = bestChromosome;
         counterOfBest = 0;
       } else {
         counterOfBest++;
         if (counterOfBest >= 1000) {
           console.log('1000 iterations without improvement!');
-          console.log(bestChromosome);
           break;
         }
       }
 
       if (bestError <= 1e-6) {
         console.log(`Error is small enough. Iteration: ${this.iteration}`);
-        console.log(bestChromosome);
         break;
       }
 
       this.iteration++;
-      if (this.iteration % 100 === 0) {
-        console.log(`[${this.iteration}]: ${bestChromosome.fitness}`);    
-      }
+      // if (this.iteration % 100 === 0) {
+      //   console.log(`[${this.iteration}]: ${bestChromosome.fitness}`);    
+      // }
     }
 
     console.log(`Solution: ${bestError}`);
     console.log(`Total number of iterations: ${this.iteration}`);
+    console.log(bestErrorChromosome);
   }
 }

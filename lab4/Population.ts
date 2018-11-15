@@ -3,7 +3,7 @@ import Chromosome from "./Chromosome";
 export default class Population {
   chromosomes: Chromosome[];
 
-  constructor(public size: number, private numberOfGenes: number, upperBound: number, lowerBound: number) {
+  constructor(size: number, private numberOfGenes: number, upperBound: number, lowerBound: number) {
     this.chromosomes = Array.from({ length: size }).map(() => new Chromosome(numberOfGenes, upperBound, lowerBound));
   }
 
