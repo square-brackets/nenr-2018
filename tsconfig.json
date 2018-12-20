@@ -4,6 +4,7 @@
             "es7",
             "dom"
         ],
+        "target": "es2018",
         "downlevelIteration": true
     }
 }
